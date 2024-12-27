@@ -22,3 +22,15 @@ module.exports.userRegister = async (req, res, next) => {
         return res.status(500).json({ message : error.message })
     }
 }
+module.exports.userLogin = (req,res,next) =>{
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        res.status(400).json({error : errors.array()})
+    }
+    try{
+    }
+    catch{
+        
+    }
+
+}
