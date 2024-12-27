@@ -1,4 +1,4 @@
-const user = require('../models/user')
+const userModel = require('../models/user')
 const userService = require('../services/user.service')
 const { validationResult } = require('express-validator')
 module.exports.userRegister = async (req, res, next) => {
@@ -19,18 +19,21 @@ module.exports.userRegister = async (req, res, next) => {
         })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ message : error.message })
+        return res.status(500).json({ message: error.message })
     }
 }
-module.exports.userLogin = (req,res,next) =>{
+module.exports.userLogin = (req, res, next) => {
     const errors = validationResult(req)
-    if(!errors.isEmpty()){
-        res.status(400).json({error : errors.array()})
+    const { email, password } = req.body;
+    if (!errors.isEmpty()) {
+        res.status(400).json({ error: errors.array() })
     }
-    try{
+    const user = userModel.findOne({ email }).select('+password')
+    if (!user){
+        res.status(504).s
     }
-    catch{
-        
-    }
+
+
+
 
 }
