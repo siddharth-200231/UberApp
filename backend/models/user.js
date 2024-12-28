@@ -32,7 +32,7 @@ userSchema.methods.generateAuth = function () {
 }
 
 // Method to compare passwords (using bcrypt.compare)
-userSchema.methods.compare = async function (password) {
+userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 

@@ -1,6 +1,7 @@
-const userModel = require('../models/user')
+const user = require('../models/user')
 const userService = require('../services/user.service')
 const { validationResult } = require('express-validator')
+const authMiddleware = require('../middlewares/auth.middleware')
 module.exports.userRegister = async (req, res, next) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -22,17 +23,27 @@ module.exports.userRegister = async (req, res, next) => {
         return res.status(500).json({ message: error.message })
     }
 }
-module.exports.userLogin = (req, res, next) => {
+module.exports.userLogin = async (req, res, next) => {
     const errors = validationResult(req)
     const { email, password } = req.body;
     if (!errors.isEmpty()) {
-        res.status(400).json({ error: errors.array() })
-    }
-    const user = userModel.findOne({ email }).select('+password')
-    if (!user){
-        res.status(504).s
+        return res.status(400).json({ error: errors.array() })
     }
 
+    const User = await user.findOne({ email }).select('+password')
+    if (!User) {
+        return res.status(401).json({ message: " User doesn't exist " })
+    }
+    const match = await User.comparePassword(password)
+    if (!match) {
+        return res.status(401).json({ message: " Incorrect password " })
+    }
+    const token = User.generateAuth()
+    res.status(200).json({ token, User })
+}
+module.exports.userProfile = async (req, res, next) => {
+
+    res.status(200).json({ user: req.user })
 
 
 
