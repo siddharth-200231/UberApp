@@ -49,19 +49,23 @@ const captainSchema = new mongoose.Schema({
             type: Number,
         }
     }
-
-})
+});
 
 captainSchema.methods.generateAuth = function () {
-    const token = jwt.sign({ _id: this._id }, process.env.jwt_secret, { expiresIn: '1h' })
-    return token
-}
+    const token = jwt.sign({ _id: this._id }, process.env.jwt_secret, { expiresIn: '1h' });
+    return token;
+};
+
 captainSchema.methods.comparePassword = async function (password) {
-    return await bcrypt.compare(password, this.password)
-}
+    return await bcrypt.compare(password, this.password);
+};
+
 captainSchema.statics.hashPassword = async function (password) {
-    return await bcrypt.hash(password, 10)
-}
-const captainModel = mongoose.model('Captain', captainSchema)
+    return await bcrypt.hash(password, 10);
+};
+
+const captainModel = mongoose.model('Captain', captainSchema);
+
+module.exports = captainModel;
 
 

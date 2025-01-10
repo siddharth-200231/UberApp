@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const captainModel = require('../models/captain.model');
-module.exports.createCaptain = async (req,res) => {
-    const { fullname, email, password, status, vechile } = req.body;
+
+module.exports.createCaptain = async (captainInfo) => {
+    const { fullname, email, password, status, vechile } = captainInfo;
     const { color, plate, vechileType } = vechile;
     if (!fullname || !email || !password || !vechile || !vechile.color || !vechile.plate || !vechile.vechileType) {
         throw new Error('All fields are required');
@@ -27,7 +28,5 @@ module.exports.createCaptain = async (req,res) => {
     return {
         captain: newCaptain,
         token
-    }
-
-
+    };
 };
