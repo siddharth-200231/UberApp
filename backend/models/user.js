@@ -36,11 +36,6 @@ userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
-// Static method to hash the password (using bcrypt.hash)
-userSchema.statics.hash = (password) => {
-    return bcrypt.hash(password, 10)
-}
-
 // Register the model
 const userModel = mongoose.model('User', userSchema)
 
