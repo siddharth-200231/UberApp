@@ -27,3 +27,28 @@ module.exports.captainRegister = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 }
+module.exports.captainLogin = async (req, res) => {
+    const errors = validationResult(req);
+    const { email, password } = req.body;
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ error: errors.array() });
+    }
+    const Captain = await captain.findOne({ email }).select('+password');
+    if (!Captain) {
+        return res.status(401).json({ message: " Captain doesn't exist " });
+    }
+    const match = await Captain.comparePassword(password);
+    if (!match) {
+        return res.status(401).json({ message: " Incorrect password " });
+    }
+    const token = Captain.generateAuth();
+    res.cookie('token', token);
+    return res.status(200).json({ token, Captain });
+}
+module.exports.captainProfile = async (req, res) => {
+    return res.status(200).json({ captain: req.captain });
+};
+module.exports.captainLogout = async (req, res) => {
+    res.clearCookie('token');
+    return res.status(200).json({ message: 'Captain logged out successfully.' });
+}
