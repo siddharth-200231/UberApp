@@ -2,7 +2,6 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')  // It's more common to use bcryptjs in Node.js
 const jwt = require('jsonwebtoken')
 
-// Define the user schema
 const userSchema = mongoose.Schema({
     fullname: {
         type: String,
