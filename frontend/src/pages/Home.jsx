@@ -8,8 +8,38 @@ const Home = () => {
       {/* Navbar */}
       <AppBar position="fixed" sx={{ background: 'transparent', boxShadow: 'none' }}>
         <Toolbar sx={{ justifyContent: 'space-between', py: 2 }}>
-          <Typography variant="h4" sx={{ color: '#fff', fontWeight: 700 }}>
-            UBER
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+              color: '#FFFFFF',
+              fontWeight: 700,
+              fontSize: { xs: '1.8rem', sm: '2rem', md: '2.2rem' },
+              letterSpacing: '-0.5px',
+              padding: '8px 16px',
+              position: 'relative',
+              display: 'inline-block',
+              transition: 'all 0.3s ease',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                left: 16,
+                width: '40px',
+                height: '3px',
+                background: '#276EF1',
+                borderRadius: '2px',
+                transition: 'width 0.3s ease'
+              },
+              '&:hover': {
+                color: '#276EF1',
+                '&::after': {
+                  width: '60px'
+                }
+              }
+            }}
+          >
+            GoCab
           </Typography>
         </Toolbar>
       </AppBar>
@@ -76,30 +106,39 @@ const Home = () => {
 
               <Button 
                 variant="contained"
-                endIcon={<ArrowForwardIcon sx={{ transition: 'transform 0.3s ease' }} />}
+                endIcon={
+                  <ArrowForwardIcon 
+                    sx={{ 
+                      transition: 'transform 0.3s ease',
+                      fontSize: { xs: '20px', md: '24px' }
+                    }} 
+                  />
+                }
                 sx={{
-                  background: 'linear-gradient(45deg, #276EF1 30%, #1A56DB 90%)',
+                  background: '#000000',
                   color: '#FFFFFF',
                   px: { xs: 4, md: 6 },
                   py: { xs: 1.5, md: 2 },
                   fontSize: { xs: '1rem', md: '1.2rem' },
                   fontWeight: 600,
-                  borderRadius: '50px',
+                  borderRadius: '8px',
                   textTransform: 'none',
                   letterSpacing: '0.5px',
-                  boxShadow: '0 4px 15px rgba(39, 110, 241, 0.2)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
-                    background: 'linear-gradient(45deg, #1A56DB 30%, #276EF1 90%)',
+                    background: '#333333',
                     transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(39, 110, 241, 0.3)',
+                    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.2)',
                     '& .MuiSvgIcon-root': {
                       transform: 'translateX(4px)'
                     }
                   },
                   '&:active': {
                     transform: 'translateY(0)',
-                    boxShadow: '0 4px 15px rgba(39, 110, 241, 0.2)'
+                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
                   }
                 }}
               >
