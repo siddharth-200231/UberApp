@@ -1,8 +1,15 @@
 import React from 'react';
 import { Button, Typography, Container, Box, AppBar, Toolbar } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/login');
+  };
+
   return (
     <Box sx={{ backgroundColor: '#000' }}>
       {/* Navbar */}
@@ -127,6 +134,7 @@ const Home = () => {
                     }} 
                   />
                 }
+                onClick={handleGetStarted}
                 sx={{
                   background: '#000000',
                   color: '#FFFFFF',
