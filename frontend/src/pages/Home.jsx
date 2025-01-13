@@ -7,16 +7,16 @@ const Home = () => {
     <Box sx={{ backgroundColor: '#000' }}>
       {/* Navbar */}
       <AppBar position="fixed" sx={{ background: 'transparent', boxShadow: 'none' }}>
-        <Toolbar sx={{ justifyContent: 'space-between', py: 2 }}>
+        <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 3, sm: 2 } }}>
           <Typography 
             variant="h4" 
             sx={{ 
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               color: '#FFFFFF',
               fontWeight: 700,
-              fontSize: { xs: '1.8rem', sm: '2rem', md: '2.2rem' },
+              fontSize: { xs: '2.5rem', sm: '2.8rem', md: '3rem' },
               letterSpacing: '-0.5px',
-              padding: '8px 16px',
+              padding: { xs: '12px 20px', sm: '10px 18px' },
               position: 'relative',
               display: 'inline-block',
               transition: 'all 0.3s ease',
@@ -45,7 +45,7 @@ const Home = () => {
       </AppBar>
 
       {/* Hero Section */}
-      <Box className='min-h-screen w-full relative'>
+      <Box sx={{ minHeight: '100vh', position: 'relative' }}>
         <Container maxWidth="xl" sx={{ height: '100%' }}>
           <Box position="relative" height="100vh">
             {/* Background Image with Overlay */}
@@ -94,14 +94,27 @@ const Home = () => {
                 sx={{
                   color: '#fff',
                   fontWeight: 800,
-                  fontSize: { xs: '2.5rem', md: '4rem', lg: '5rem' },
+                  fontSize: { xs: '3.5rem', sm: '4rem', md: '5rem' },
                   textAlign: 'center',
-                  mb: 4,
+                  mb: { xs: 4, sm: 5 },
+                  pt: { xs: 15, sm: 20 },
                   letterSpacing: -0.5,
                   textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
                 }}
               >
-                Your Ride, Your Way
+                Your Ride Awaits
+              </Typography>
+
+              <Typography 
+                variant="h6" 
+                sx={{
+                  color: 'rgba(255,255,255,0.8)',
+                  fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' },
+                  textAlign: 'center',
+                  mb: { xs: 6, sm: 8 }
+                }}
+              >
+                Travel with comfort and style
               </Typography>
 
               <Button 
@@ -110,16 +123,16 @@ const Home = () => {
                   <ArrowForwardIcon 
                     sx={{ 
                       transition: 'transform 0.3s ease',
-                      fontSize: { xs: '20px', md: '24px' }
+                      fontSize: { xs: '2rem', sm: '2.2rem' }
                     }} 
                   />
                 }
                 sx={{
                   background: '#000000',
                   color: '#FFFFFF',
-                  px: { xs: 4, md: 6 },
-                  py: { xs: 1.5, md: 2 },
-                  fontSize: { xs: '1rem', md: '1.2rem' },
+                  px: { xs: 6, sm: 8 },
+                  py: { xs: 2, sm: 2.5 },
+                  fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem' },
                   fontWeight: 600,
                   borderRadius: '8px',
                   textTransform: 'none',
