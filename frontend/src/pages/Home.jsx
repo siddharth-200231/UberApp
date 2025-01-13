@@ -7,7 +7,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/login');
+    navigate('/User-login');
   };
 
   return (
@@ -79,7 +79,7 @@ const Home = () => {
                 src="cab.jpg" 
                 alt="Cab Service"
                 className='h-full w-full object-cover'
-                style={{ filter: 'brightness(0.8)' }}
+                style={{ filter: 'brightness(0.9)' }}
               />
             </Box>
 
