@@ -25,6 +25,7 @@ router.post("/register",
     controller.captainRegister
 )
 router.post("/login", [
+
     body("email").isEmail().withMessage("Invalid Email"),
     body("password")
         .isLength({ min: 6 })

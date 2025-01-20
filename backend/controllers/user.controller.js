@@ -27,9 +27,14 @@ module.exports.userRegister = async (req, res, next) => {
 module.exports.userLogin = async (req, res, next) => {
     const errors = validationResult(req)
     const { email, password } = req.body;
+  
+    if(email === '' || password === ''){
+        return res.status(400).json({ message: 'Email and password are required.' })
+    }
     if (!errors.isEmpty()) {
         return res.status(400).json({ error: errors.array() })
     }
+
     const User = await user.findOne({ email }).select('+password')
     if (!User) {
         return res.status(401).json({ message: " User doesn't exist " })

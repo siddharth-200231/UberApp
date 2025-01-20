@@ -13,35 +13,53 @@ const Home = () => {
   return (
     <Box sx={{ backgroundColor: '#000' }}>
       {/* Navbar */}
-      <AppBar position="fixed" sx={{ background: 'transparent', boxShadow: 'none' }}>
-        <Toolbar sx={{ justifyContent: 'space-between', py: { xs: 3, sm: 2 } }}>
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)'
+        }}
+      >
+        <Toolbar 
+          sx={{ 
+            justifyContent: 'space-between',
+            py: { xs: 2, sm: 2.5 },
+            px: { xs: 2, sm: 4, md: 6 },
+            maxWidth: 1400,
+            mx: 'auto',
+            width: '100%'
+          }}
+        >
           <Typography 
             variant="h4" 
             sx={{ 
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
               color: '#FFFFFF',
               fontWeight: 700,
-              fontSize: { xs: '2.5rem', sm: '2.8rem', md: '3rem' },
+              fontSize: { xs: '2rem', sm: '2.2rem', md: '2.5rem' },
               letterSpacing: '-0.5px',
-              padding: { xs: '12px 20px', sm: '10px 18px' },
               position: 'relative',
-              display: 'inline-block',
+              cursor: 'pointer',
               transition: 'all 0.3s ease',
               '&::after': {
                 content: '""',
                 position: 'absolute',
-                bottom: 0,
-                left: 16,
-                width: '40px',
-                height: '3px',
+                bottom: -2,
+                left: 0,
+                width: '30%',
+                height: '2px',
                 background: '#276EF1',
                 borderRadius: '2px',
-                transition: 'width 0.3s ease'
+                transition: 'width 0.3s ease',
+                opacity: 0
               },
               '&:hover': {
-                color: '#276EF1',
+                color: '#fff',
+                transform: 'translateY(-1px)',
                 '&::after': {
-                  width: '60px'
+                  width: '100%',
+                  opacity: 1
                 }
               }
             }}
@@ -56,13 +74,14 @@ const Home = () => {
         <Container maxWidth="xl" sx={{ height: '100%' }}>
           <Box position="relative" height="100vh">
             {/* Background Image with Overlay */}
-            <Box
+            <Box 
               sx={{
                 position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
+                overflow: 'hidden',
                 '&::before': {
                   content: '""',
                   position: 'absolute',
@@ -78,8 +97,14 @@ const Home = () => {
               <img 
                 src="cab.jpg" 
                 alt="Cab Service"
-                className='h-full w-full object-cover'
-                style={{ filter: 'brightness(0.9)' }}
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center center',
+                  filter: 'brightness(1)',
+                  backgroundColor: '#000' // Fallback
+                }}
               />
             </Box>
 
@@ -124,47 +149,67 @@ const Home = () => {
                 Travel with comfort and style
               </Typography>
 
-              <Button 
-                variant="contained"
-                endIcon={
-                  <ArrowForwardIcon 
-                    sx={{ 
-                      transition: 'transform 0.3s ease',
-                      fontSize: { xs: '2rem', sm: '2.2rem' }
-                    }} 
-                  />
+             
+
+              <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 3, sm: 5 },
+                mt: 6,
+                '& button': {
+                  transition: 'all 0.3s ease'
                 }
-                onClick={handleGetStarted}
-                sx={{
-                  background: '#000000',
-                  color: '#FFFFFF',
-                  px: { xs: 6, sm: 8 },
-                  py: { xs: 2, sm: 2.5 },
-                  fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem' },
-                  fontWeight: 600,
-                  borderRadius: '8px',
-                  textTransform: 'none',
-                  letterSpacing: '0.5px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(10px)',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
-                    background: '#333333',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.2)',
-                    '& .MuiSvgIcon-root': {
-                      transform: 'translateX(4px)'
+              }}>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate('/User-login')}
+                  sx={{
+                    bgcolor: 'rgba(255, 255, 255, 0.95)',
+                    color: '#000',
+                    px: { xs: 6, sm: 8 },
+                    py: { xs: 1.8, sm: 2 },
+                    fontSize: { xs: '1rem', sm: '1.1rem' },
+                    fontWeight: 600,
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
+                    backdropFilter: 'blur(10px)',
+                    '&:hover': {
+                      bgcolor: '#fff',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.15)'
                     }
-                  },
-                  '&:active': {
-                    transform: 'translateY(0)',
-                    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
-                  }
-                }}
-              >
-                Get Started
-              </Button>
+                  }}
+                >
+                  Get started as Passenger
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  onClick={() => navigate('/Captain-login')}
+                  sx={{
+                    borderColor: 'rgba(255,255,255,0.8)',
+                    borderWidth: '2px',
+                    color: '#fff',
+                    px: { xs: 6, sm: 8 },
+                    py: { xs: 1.7, sm: 1.9 },
+                    fontSize: { xs: '1rem', sm: '1.1rem' },
+                    fontWeight: 600,
+                    borderRadius: '8px',
+                    textTransform: 'none',
+                    backdropFilter: 'blur(10px)',
+                    background: 'rgba(255,255,255,0.1)',
+                    '&:hover': {
+                      borderColor: '#fff',
+                      background: 'rgba(255,255,255,0.2)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
+                    }
+                  }}
+                >
+                  Get started as Driver
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Container>
