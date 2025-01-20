@@ -6,10 +6,14 @@ const captainModel = require('../models/captain.model');
 const captainService = require('../services/captain.service');
 
 module.exports.captainRegister = async (req, res) => {
+    // Validate request body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ error: errors.array() });
+        return res.status(400).json({ 
+            message: errors.array()[0].msg 
+        });
     }
+
     try {
         const createdCaptain = await captainService.createCaptain(req.body);
         return res.status(201).json({
@@ -23,10 +27,24 @@ module.exports.captainRegister = async (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: error.message });
+        // Handle specific error cases
+        if (error.message.includes('Email already exists')) {
+            return res.status(409).json({ 
+                message: 'Email already registered' 
+            });
+        }
+        if (error.message.includes('All fields are required')) {
+            return res.status(400).json({ 
+                message: 'Please fill in all required fields' 
+            });
+        }
+        // Generic error
+        return res.status(500).json({ 
+            message: 'Registration failed. Please try again.' 
+        });
     }
-}
+};
+
 module.exports.captainLogin = async (req, res) => {
     const errors = validationResult(req);
     const { email, password } = req.body;

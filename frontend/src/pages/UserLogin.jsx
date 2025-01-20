@@ -15,6 +15,7 @@ const UserLogin = () => {
     e.preventDefault();
     await axios.post(`${API_URL}/users/login`, { email, password }).then((res) => {
       if (res.status === 200) {
+        localStorage.setItem('token', res.data.token);
         navigate('/User-profile');
       }
     } ).catch((err) => {
