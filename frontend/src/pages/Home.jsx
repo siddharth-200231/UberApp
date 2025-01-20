@@ -1,10 +1,18 @@
-import React from 'react';
-import { Button, Typography, Container, Box, AppBar, Toolbar } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Button, Typography, Container, Box, AppBar, Toolbar, CircularProgress } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Preload image
+  useEffect(() => {
+    const img = new Image();
+    img.src = "cab.jpg";
+    img.onload = () => setImageLoaded(true);
+  }, []);
 
   const handleGetStarted = () => {
     navigate('/User-login');
@@ -94,16 +102,40 @@ const Home = () => {
                 }
               }}
             >
+              {/* Loading placeholder */}
+              {!imageLoaded && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    bgcolor: '#1a1a1a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <CircularProgress sx={{ color: 'white' }} />
+                </Box>
+              )}
+
+              {/* Optimized image */}
               <img 
-                src="cab.jpg" 
+                src="cab.jpg"
                 alt="Cab Service"
-                style={{ 
+                loading="eager"
+                fetchpriority="high"
+                style={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   objectPosition: 'center center',
                   filter: 'brightness(1)',
-                  backgroundColor: '#000' // Fallback
+                  backgroundColor: '#000', // Fallback
+                  opacity: imageLoaded ? 1 : 0,
+                  transition: 'opacity 0.3s ease-in-out'
                 }}
               />
             </Box>

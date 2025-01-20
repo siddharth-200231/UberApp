@@ -3,6 +3,7 @@ import { Box, Container, Typography, TextField, Button, Paper, Alert } from '@mu
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
+import API_URL from '../api';
 
 const UserSignup = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const UserSignup = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:4000/users/register', {
+      const response = await axios.post(`${API_URL}/users/register `, {
         fullname,
         email,
         password
@@ -66,8 +67,12 @@ const UserSignup = () => {
 
       <Container maxWidth="sm" sx={{ py: 8 }}>
         <Paper elevation={1} sx={{ p: 4, borderRadius: 1 }}>
-          <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>
+          <Typography variant="h4" sx={{ mb: 2, fontWeight: 700 }}>
             Create an account
+          </Typography>
+
+          <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
+            Welcome to GoCab! Please fill in your details below to create your passenger account.
           </Typography>
 
           {error && (
@@ -82,8 +87,7 @@ const UserSignup = () => {
               label="Full Name"
               value={fullname}
               onChange={(e) =>setFullname(e.target.value)} 
-              margin="normal"
-              required
+              helperText="Minimum 3 characters required"
               sx={{ mb: 2 }}
             />
 
@@ -93,8 +97,7 @@ const UserSignup = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              margin="normal"
-              required
+              helperText="Enter a valid email address"
               sx={{ mb: 2 }}
             />
 
@@ -104,9 +107,8 @@ const UserSignup = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              margin="normal"
-              required
-              sx={{ mb: 4 }}
+              helperText="Minimum 6 characters required"
+              sx={{ mb: 3 }}
             />
 
             <Button

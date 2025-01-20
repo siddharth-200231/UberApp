@@ -3,7 +3,7 @@ import { Box, Container, Typography, TextField, Button, Paper, Alert, MenuItem }
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
-
+import API_URL from '../api';
 const CaptainSignup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -25,7 +25,7 @@ const CaptainSignup = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:4000/captains/register', formData);
+      const response = await axios.post( `${API_URL}/captains/register` , formData);
       if (response.status === 201) {
         localStorage.setItem('token', response.data.token);
         navigate('/Captain-profile');
@@ -59,8 +59,12 @@ const CaptainSignup = () => {
 
       <Container maxWidth="sm" sx={{ py: 8 }}>
         <Paper elevation={1} sx={{ p: 4, borderRadius: 1 }}>
-          <Typography variant="h4" sx={{ mb: 4, fontWeight: 700 }}>
+          <Typography variant="h4" sx={{ mb: 2, fontWeight: 700 }}>
             Register as Captain
+          </Typography>
+
+          <Typography variant="body1" sx={{ mb: 4, color: 'text.secondary' }}>
+            Join our network of professional drivers. Please provide your personal and vehicle details below.
           </Typography>
 
           {error && (
@@ -70,9 +74,14 @@ const CaptainSignup = () => {
           )}
 
           <form onSubmit={handleSubmit}>
+            {/* Personal Information Section */}
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+              Personal Information
+            </Typography>
             <TextField
               fullWidth
               label="Full Name"
+              helperText="Minimum 3 characters required"
               value={formData.fullname}
               onChange={(e) => setFormData({...formData, fullname: e.target.value})}
               margin="normal"
@@ -84,6 +93,7 @@ const CaptainSignup = () => {
               fullWidth
               label="Email"
               type="email"
+              helperText="Enter a valid email address"
               value={formData.email}
               onChange={(e) => setFormData({...formData, email: e.target.value})}
               margin="normal"
@@ -95,6 +105,7 @@ const CaptainSignup = () => {
               fullWidth
               label="Password"
               type="password"
+              helperText="Minimum 6 characters required"
               value={formData.password}
               onChange={(e) => setFormData({...formData, password: e.target.value})}
               margin="normal"
@@ -102,13 +113,17 @@ const CaptainSignup = () => {
               sx={{ mb: 3 }}
             />
 
-            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+            {/* Vehicle Details Section */}
+            <Typography variant="h6" sx={{ mt: 4, mb: 2, fontWeight: 600 }}>
               Vehicle Details
             </Typography>
-
+            <Typography variant="body2" sx={{ mb: 3, color: 'text.secondary' }}>
+              Please provide accurate vehicle information for passenger identification.
+            </Typography>
             <TextField
               fullWidth
               label="Vehicle Color"
+              helperText="Minimum 3 characters required"
               value={formData.vechile.color}
               onChange={(e) => setFormData({
                 ...formData, 
@@ -122,6 +137,7 @@ const CaptainSignup = () => {
             <TextField
               fullWidth
               label="Vehicle Plate Number"
+              helperText="Minimum 3 characters required"
               value={formData.vechile.plate}
               onChange={(e) => setFormData({
                 ...formData,
@@ -136,6 +152,7 @@ const CaptainSignup = () => {
               select
               fullWidth
               label="Vehicle Type"
+              helperText="Select your vehicle type"
               value={formData.vechile.vechileType}
               onChange={(e) => setFormData({
                 ...formData,
