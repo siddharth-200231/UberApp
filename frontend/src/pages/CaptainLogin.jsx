@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { CaptainDataContext } from '../context/CaptainContext';
 import { AppBar, Toolbar, Typography, Box } from '@mui/material';
 import api from "../api";
 
 const CaptainLogin = () => {
   const navigate = useNavigate();
+  const { setCaptainData } = useContext(CaptainDataContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,15 +18,30 @@ const CaptainLogin = () => {
       const res = await axios.post(`${api}/captains/login`, 
         { email, password }
       );
+      
       if (res.status === 200) {
-        localStorage.setItem('token', res.data.token);
-        navigate("/Captain-profile");
+        const { token, Captain } = res.data;
+        
+        // Store token
+        localStorage.setItem('CaptainToken', token);
+        localStorage.removeItem('token');
+        
+        // Update captain context
+        setCaptainData({
+          name: Captain.fullname,
+          email: Captain.email,
+          CaptainToken: token,
+          vechile: Captain.vechile,
+          status: Captain.status,
+          location: Captain.location
+        });
+
+        // Navigate to profile
+        navigate("/Captain-home");
       }
     } catch (err) {
-      setError(err.response.data.message);
+      setError(err.response?.data?.message || 'Login failed');
     }
-    setEmail("");
-    setPassword("");
   };
 
   return (

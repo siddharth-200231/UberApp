@@ -2,12 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box, Typography } from '@mui/material';
 
-const Home = () => {
+const CaptainHome = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/User-login');
+    navigate('/Captain-logout');
   };
 
   return (
@@ -39,11 +38,11 @@ const Home = () => {
         justifyContent: 'center'
       }}>
         <Typography variant="h4">
-          Welcome to GoCab
+          Welcome Captain
         </Typography>
       </Box>
     </Box>
   );
 };
 
-export default Home;
+export default CaptainHome;

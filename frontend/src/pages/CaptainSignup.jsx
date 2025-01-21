@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper, Alert, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import API_URL from '../api';
+import { CaptainDataContext } from '../context/CaptainContext';
+
 const CaptainSignup = () => {
   const navigate = useNavigate();
+  const { setCaptainData } = useContext(CaptainDataContext);
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
@@ -25,11 +28,28 @@ const CaptainSignup = () => {
     setError('');
 
     try {
-      const response = await axios.post( `${API_URL}/captains/register` , formData);
+      const response = await axios.post(`${API_URL}/captains/register`, formData);
       if (response.status === 201) {
-        localStorage.setItem('token', response.data.token);
-        navigate('/Captain-profile');
+        const { token, captain } = response.data;
+        
+        // Store token
+        localStorage.setItem('CaptainToken', token);
+        localStorage.removeItem('token');
+        
+        // Update captain context
+        setCaptainData({
+          name: captain.fullname,
+          email: captain.email,
+          CaptainToken: token,
+          vechile: captain.vechile,
+          status: 'inactive',
+          location: {
+            lat: null,
+            lng: null
+          }
+        });
 
+        navigate('/Captain-home');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');

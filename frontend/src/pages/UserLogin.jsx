@@ -26,6 +26,7 @@ const UserLogin = () => {
         
         // Store token
         localStorage.setItem('token', token);
+        localStorage.removeItem('CaptainToken');
         
         // Update context with user data
         setUserData({
