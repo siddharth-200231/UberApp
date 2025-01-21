@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Box, Container, Typography, TextField, Button, Paper, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import API_URL from '../api';
+import { UserDataContext } from '../context/UserContext';
 
 const UserSignup = () => {
   const navigate = useNavigate();
+  const { setUserData } = useContext(UserDataContext);
   const[fullname , setFullname] = useState('');
   const[email , setEmail] = useState('');
   const[password , setPassword] = useState('');
@@ -26,16 +28,26 @@ const UserSignup = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/users/register `, {
+      const response = await axios.post(`${API_URL}/users/register`, {
         fullname,
         email,
         password
       });
 
       if (response.status === 201) { // Backend returns 201 for successful creation
-        // Store token if needed
-        localStorage.setItem('token', response.data.token);
-        navigate('/User-profile');
+        const { token, user } = response.data;
+        
+        // Store token
+        localStorage.setItem('token', token);
+        
+        // Update context with user data
+        setUserData({
+          name: user.fullname,
+          email: user.email,
+          token: token
+        });
+
+        navigate('/home');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');

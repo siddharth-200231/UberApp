@@ -45,7 +45,11 @@ module.exports.userLogin = async (req, res, next) => {
     }
     const token = User.generateAuth()
     res.cookie('token', token)
-    return res.status(200).json({ token, User })
+    return res.status(200).json({ token, user :{
+        id: User.id,
+        fullname: User.fullname,
+        email: User.email
+    } })
 }
 module.exports.userProfile = async (req, res, next) => {
     return res.status(200).json({ user: req.user })

@@ -1,10 +1,19 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 
+// Create context outside component
+export const UserDataContext = createContext();
+
+// Rename to UserContextProvider for clarity
 export const UserContext = ({ children }) => {
-  const UserDataContext = createContext();
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    token: "",
+  });
+
   return (
-    <div>
-      <UserDataContext.Provider>{children}</UserDataContext.Provider>
-    </div>
+    <UserDataContext.Provider value={{ userData, setUserData }}>
+      {children}
+    </UserDataContext.Provider>
   );
 };

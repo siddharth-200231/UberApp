@@ -1,30 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { set } from 'mongoose';
+import { UserDataContext } from '../context/UserContext';
 import API_URL from '../api';
 import { AppBar, Toolbar, Typography, Box } from '@mui/material';
 
 const UserLogin = () => {
   const navigate = useNavigate();
+  const { setUserData } = useContext(UserDataContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    await axios.post(`${API_URL}/users/login`, { email, password }).then((res) => {
-      if (res.status === 200) {
-        localStorage.setItem('token', res.data.token);
-        navigate('/User-profile');
-      }
-    } ).catch((err) => {
-      setError(err.response.data.message);
-    } 
-    );
-    setEmail('');
-    setPassword('');
     
+    try {
+      const response = await axios.post(`${API_URL}/users/login`, { 
+        email, 
+        password 
+      });
+
+      if (response.status === 200) {
+        const { token, user } = response.data;
+        
+        // Store token
+        localStorage.setItem('token', token);
+        
+        // Update context with user data
+        setUserData({
+          name: user.fullname,
+          email: user.email,
+          token: token
+        });
+
+        // Navigate after context update
+        navigate('/home');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed');
+    }
   };
 
   return (
