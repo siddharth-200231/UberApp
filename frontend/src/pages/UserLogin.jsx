@@ -24,18 +24,16 @@ const UserLogin = () => {
       if (response.status === 200) {
         const { token, user } = response.data;
         
-        // Store token
+      
         localStorage.setItem('token', token);
         localStorage.removeItem('CaptainToken');
-        
-        // Update context with user data
+       
         setUserData({
           name: user.fullname,
           email: user.email,
           token: token
         });
-
-        // Navigate after context update
+        
         navigate('/home');
       }
     } catch (err) {

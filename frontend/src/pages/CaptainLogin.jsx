@@ -21,12 +21,10 @@ const CaptainLogin = () => {
       
       if (res.status === 200) {
         const { token, Captain } = res.data;
-        
-        // Store token
+                
         localStorage.setItem('CaptainToken', token);
         localStorage.removeItem('token');
-        
-        // Update captain context
+
         setCaptainData({
           name: Captain.fullname,
           email: Captain.email,

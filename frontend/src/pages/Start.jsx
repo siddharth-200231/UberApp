@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, Typography, Container, Box, AppBar, Toolbar, CircularProgress } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Start = () => {
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const buttonRef = useRef(null);
+  const contentRef = useRef(null);
+  const textRef = useRef(null);
+  const mainRef = useRef(null);
+  const imageRef = useRef(null);
 
   // Preload image
   useEffect(() => {
@@ -14,12 +23,71 @@ const Start = () => {
     img.onload = () => setImageLoaded(true);
   }, []);
 
+  useEffect(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' }});
+
+    // Background image zoom
+    tl.fromTo(imageRef.current, 
+      { scale: 1.1, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.5 }
+    );
+    
+    // Hero text reveal
+    tl.fromTo(textRef.current.children, 
+      { 
+        y: 100, 
+        opacity: 0,
+        rotateX: -30
+      },
+      { 
+        y: 0, 
+        opacity: 1,
+        rotateX: 0,
+        stagger: 0.1,
+        duration: 1,
+        ease: "power4.out"
+      },
+      "-=1"
+    );
+
+    // Button entrance
+    tl.fromTo(buttonRef.current,
+      { 
+        y: 50, 
+        opacity: 0,
+        scale: 0.9
+      },
+      { 
+        y: 0, 
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "back.out(1.7)"
+      },
+      "-=0.5"
+    );
+
+    // Scroll animation
+    ScrollTrigger.create({
+      trigger: mainRef.current,
+      start: "top top",
+      end: "bottom top",
+      scrub: 1,
+      onUpdate: (self) => {
+        gsap.to(imageRef.current, {
+          scale: 1 + (self.progress * 0.1),
+          yPercent: self.progress * 10
+        });
+      }
+    });
+  }, []);
+
   const handleGetStarted = () => {
     navigate('/User-login');
   };
 
   return (
-    <Box sx={{ backgroundColor: '#000' }}>
+    <Box sx={{ backgroundColor: '#000' }} ref={contentRef}>
       {/* Navbar */}
       <AppBar 
         position="fixed" 
@@ -78,7 +146,7 @@ const Start = () => {
       </AppBar>
 
       {/* Hero Section */}
-      <Box sx={{ minHeight: '100vh', position: 'relative' }}>
+      <Box sx={{ minHeight: '100vh', position: 'relative' }} ref={mainRef}>
         <Container maxWidth="xl" sx={{ height: '100%' }}>
           <Box position="relative" height="100vh">
             {/* Background Image with Overlay */}
@@ -137,6 +205,7 @@ const Start = () => {
                   opacity: imageLoaded ? 1 : 0,
                   transition: 'opacity 0.3s ease-in-out'
                 }}
+                ref={imageRef}
               />
             </Box>
 
@@ -152,6 +221,7 @@ const Start = () => {
                 alignItems: 'center',
                 pt: 8
               }}
+              ref={textRef}
             >
               <Typography 
                 variant="h1" 
@@ -163,7 +233,12 @@ const Start = () => {
                   mb: { xs: 4, sm: 5 },
                   pt: { xs: 15, sm: 20 },
                   letterSpacing: -0.5,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                  transform: 'perspective(1000px)',
+                  '&:hover': {
+                    transform: 'perspective(1000px) rotateX(5deg)'
+                  },
+                  transition: 'transform 0.3s ease-out'
                 }}
               >
                 Your Ride Awaits
@@ -193,6 +268,7 @@ const Start = () => {
                 }
               }}>
                 <Button
+                  ref={buttonRef}
                   variant="contained"
                   onClick={() => navigate('/User-signup')}
                   sx={{
@@ -206,10 +282,12 @@ const Start = () => {
                     textTransform: 'none',
                     boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
                     backdropFilter: 'blur(10px)',
+                    transform: 'translateY(0)',
+                    transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                     '&:hover': {
                       bgcolor: '#fff',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 20px rgba(0,0,0,0.15)'
+                      transform: 'translateY(-5px)',
+                      boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
                     }
                   }}
                 >
