@@ -33,14 +33,14 @@ const CaptainSignup = () => {
         const { token, captain } = response.data;
         
         // Store token
-        localStorage.setItem('CaptainToken', token);
+        localStorage.setItem('Captaintoken', token);
         localStorage.removeItem('token');
         
         // Update captain context
         setCaptainData({
           name: captain.fullname,
           email: captain.email,
-          CaptainToken: token,
+          Captaintoken: token,
           vechile: captain.vechile,
           status: 'inactive',
           location: {

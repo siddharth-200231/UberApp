@@ -22,13 +22,13 @@ const CaptainLogin = () => {
       if (res.status === 200) {
         const { token, Captain } = res.data;
                 
-        localStorage.setItem('CaptainToken', token);
+        localStorage.setItem('Captaintoken', token);
         localStorage.removeItem('token');
 
         setCaptainData({
           name: Captain.fullname,
           email: Captain.email,
-          CaptainToken: token,
+          Captaintoken: token,
           vechile: Captain.vechile,
           status: Captain.status,
           location: Captain.location

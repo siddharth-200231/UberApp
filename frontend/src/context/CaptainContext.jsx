@@ -6,7 +6,7 @@ export const CaptainContext = ({ children }) => {
   const [captainData, setCaptainData] = useState({
     name: '',
     email: '',
-    captainToken: '',
+    captaintoken: '',
     vechile: {
       color: '',
       plate: '',

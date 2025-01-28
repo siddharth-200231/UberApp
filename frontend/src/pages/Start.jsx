@@ -1,22 +1,31 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Button, Typography, Container, Box, AppBar, Toolbar, CircularProgress } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useNavigate } from 'react-router-dom';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Button,
+  Typography,
+  Container,
+  Box,
+  AppBar,
+  Toolbar,
+  CircularProgress,
+} from "@mui/material";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useNavigate } from "react-router-dom";
+import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
 
 const Start = () => {
   const navigate = useNavigate();
   const [imageLoaded, setImageLoaded] = useState(false);
   const buttonRef = useRef(null);
-  const contentRef = useRef(null);
   const textRef = useRef(null);
   const mainRef = useRef(null);
   const imageRef = useRef(null);
+  const blob1Ref = useRef(null);
+  const blob2Ref = useRef(null);
+  const particlesRef = useRef([]);
 
-  // Preload image
   useEffect(() => {
     const img = new Image();
     img.src = "cab.jpg";
@@ -24,120 +33,244 @@ const Start = () => {
   }, []);
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' }});
+    // Particle animation
+    particlesRef.current = gsap.utils.toArray(".particle");
+    particlesRef.current.forEach((particle, i) => {
+      gsap.to(particle, {
+        duration: 4 + Math.random() * 4,
+        x: "random(-100, 100)",
+        y: "random(-100, 100)",
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+        delay: i * 0.2,
+      });
+    });
 
-    // Background image zoom
-    tl.fromTo(imageRef.current, 
-      { scale: 1.1, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 1.5 }
-    );
-    
-    // Hero text reveal
-    tl.fromTo(textRef.current.children, 
-      { 
-        y: 100, 
+    // Floating blobs animation
+    const tl = gsap.timeline({ repeat: -1, yoyo: true });
+    tl.to([blob1Ref.current, blob2Ref.current], {
+      duration: 8,
+      y: 50,
+      rotation: 360,
+      ease: "power1.inOut",
+    });
+
+    // Main timeline
+    const mainTl = gsap.timeline({ defaults: { ease: "expo.out" } });
+
+    // Background image animation with perspective effect
+    mainTl.fromTo(
+      imageRef.current,
+      {
+        scale: 1.5,
         opacity: 0,
-        rotateX: -30
+        rotation: 5,
+        transformPerspective: 1000,
       },
-      { 
-        y: 0, 
+      {
+        scale: 1,
         opacity: 1,
-        rotateX: 0,
-        stagger: 0.1,
-        duration: 1,
-        ease: "power4.out"
-      },
-      "-=1"
+        rotation: 0,
+        duration: 2.5,
+        ease: "power4.out",
+      }
     );
 
-    // Button entrance
-    tl.fromTo(buttonRef.current,
-      { 
-        y: 50, 
+    // Text animation with 3D effect
+    mainTl.fromTo(
+      textRef.current.children,
+      {
+        y: 100,
         opacity: 0,
-        scale: 0.9
+        rotationX: 45,
+        transformOrigin: "50% 50%",
       },
-      { 
-        y: 0, 
+      {
+        y: 0,
+        opacity: 1,
+        rotationX: 0,
+        stagger: 0.2,
+        duration: 1.5,
+        ease: "back.out(2)",
+      },
+      "-=1.5"
+    );
+
+    // Button animation with path motion
+    mainTl.fromTo(
+      buttonRef.current.children,
+      {
+        opacity: 0,
+        scale: 0.8,
+        motionPath: {
+          path: [
+            { x: -100, y: 0 },
+            { x: 0, y: 0 },
+          ],
+          curviness: 1.5,
+        },
+      },
+      {
         opacity: 1,
         scale: 1,
-        duration: 0.8,
-        ease: "back.out(1.7)"
+        duration: 1.2,
+        stagger: 0.3,
+        ease: "power4.out",
       },
-      "-=0.5"
+      "-=0.8"
     );
 
-    // Scroll animation
+    // Interactive hover animations for buttons
+    // Add this guard clause and convert HTMLCollection to array
+    if (buttonRef.current) {
+      Array.from(buttonRef.current.children).forEach((btn, index) => {
+        // Hover animation logic
+        gsap.to(btn, {
+          keyframes: [
+            { y: 0, duration: 1 },
+            { y: -5, duration: 0.5, ease: "power1.out" },
+            { y: 0, duration: 0.5, ease: "power1.in" },
+          ],
+          repeat: -1,
+          yoyo: true,
+          paused: true,
+          delay: index * 0.1,
+        });
+
+        btn.addEventListener("mouseenter", () =>
+          gsap.to(btn, { scale: 1.05, duration: 0.3, overwrite: true })
+        );
+        btn.addEventListener("mouseleave", () =>
+          gsap.to(btn, { scale: 1, duration: 0.3, overwrite: true })
+        );
+      });
+    }
+    // Advanced scroll parallax
     ScrollTrigger.create({
       trigger: mainRef.current,
       start: "top top",
       end: "bottom top",
-      scrub: 1,
+      scrub: 2,
       onUpdate: (self) => {
         gsap.to(imageRef.current, {
-          scale: 1 + (self.progress * 0.1),
-          yPercent: self.progress * 10
+          scale: 1 + self.progress * 0.3,
+          y: self.progress * 80,
+          rotation: self.progress * 2,
         });
-      }
+        gsap.to(textRef.current, {
+          y: self.progress * 40,
+          opacity: 1 - self.progress * 0.8,
+        });
+      },
     });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      gsap.globalTimeline.clear();
+    };
   }, []);
 
   const handleGetStarted = () => {
-    navigate('/User-login');
+    const token = localStorage.getItem("token");
+    navigate(token ? "/home" : "/User-login");
+  };
+
+  const handleGetStartedCaptain = () => {
+    const token = localStorage.getItem("Captaintoken");
+    navigate(token ? "/Captain-home" : "/Captain-login");
   };
 
   return (
-    <Box sx={{ backgroundColor: '#000' }} ref={contentRef}>
+    <Box sx={{ backgroundColor: "#000", overflow: "hidden" }} ref={mainRef}>
+      {/* Animated Background Elements */}
+      <Box
+        ref={blob1Ref}
+        sx={{
+          position: "fixed",
+          top: "20%",
+          left: "10%",
+          width: 400,
+          height: 400,
+          background:
+            "radial-gradient(circle, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0) 70%)",
+          borderRadius: "50%",
+          filter: "blur(60px)",
+          zIndex: 1,
+        }}
+      />
+      <Box
+        ref={blob2Ref}
+        sx={{
+          position: "fixed",
+          top: "60%",
+          right: "10%",
+          width: 350,
+          height: 350,
+          background:
+            "radial-gradient(circle, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0) 70%)",
+          borderRadius: "50%",
+          filter: "blur(60px)",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Particle Effects */}
+      {[...Array(12)].map((_, i) => (
+        <Box
+          key={i}
+          className="particle"
+          sx={{
+            position: "absolute",
+            width: 8,
+            height: 8,
+            background: "#FFD700",
+            borderRadius: "50%",
+            opacity: 0.3,
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+          }}
+        />
+      ))}
+
       {/* Navbar */}
-      <AppBar 
-        position="fixed" 
-        sx={{ 
-          background: 'rgba(0, 0, 0, 0.8)',
-          backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)'
+      <AppBar
+        position="fixed"
+        sx={{
+          background: "rgba(0, 0, 0, 0.7)",
+          backdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(255,255,255,0.15)",
+          py: 1,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
         }}
       >
-        <Toolbar 
-          sx={{ 
-            justifyContent: 'space-between',
-            py: { xs: 2, sm: 2.5 },
-            px: { xs: 2, sm: 4, md: 6 },
+        <Toolbar
+          sx={{
+            justifyContent: "space-between",
             maxWidth: 1400,
-            mx: 'auto',
-            width: '100%'
+            mx: "auto",
+            width: "100%",
           }}
         >
-          <Typography 
-            variant="h4" 
-            sx={{ 
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-              color: '#FFFFFF',
-              fontWeight: 700,
-              fontSize: { xs: '2rem', sm: '2.2rem', md: '2.5rem' },
-              letterSpacing: '-0.5px',
-              position: 'relative',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              '&::after': {
+          <Typography
+            variant="h4"
+            sx={{
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 800,
+              letterSpacing: "-1px",
+              background: "linear-gradient(45deg, #FFD700 30%, #FFAA00 90%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              position: "relative",
+              "&::after": {
                 content: '""',
-                position: 'absolute',
-                bottom: -2,
+                position: "absolute",
+                bottom: -4,
                 left: 0,
-                width: '30%',
-                height: '2px',
-                background: '#276EF1',
-                borderRadius: '2px',
-                transition: 'width 0.3s ease',
-                opacity: 0
+                width: "100%",
+                height: 2,
+                background: "linear-gradient(90deg, #FFD700, transparent)",
               },
-              '&:hover': {
-                color: '#fff',
-                transform: 'translateY(-1px)',
-                '&::after': {
-                  width: '100%',
-                  opacity: 1
-                }
-              }
             }}
           >
             GoCab
@@ -146,181 +279,173 @@ const Start = () => {
       </AppBar>
 
       {/* Hero Section */}
-      <Box sx={{ minHeight: '100vh', position: 'relative' }} ref={mainRef}>
-        <Container maxWidth="xl" sx={{ height: '100%' }}>
-          <Box position="relative" height="100vh">
-            {/* Background Image with Overlay */}
-            <Box 
+      <Box
+        sx={{
+          minHeight: "100vh",
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+        }}
+      >
+        {/* Background Image */}
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            overflow: "hidden",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(45deg, rgba(0,0,0,0.8), rgba(0,0,0,0.4))",
+              zIndex: 2,
+            },
+          }}
+        >
+          {!imageLoaded && (
+            <Box
               sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                overflow: 'hidden',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.4))',
-                  zIndex: 1
-                }
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                background: "linear-gradient(45deg, #121212, #1a1a1a)",
               }}
             >
-              {/* Loading placeholder */}
-              {!imageLoaded && (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    bgcolor: '#1a1a1a',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <CircularProgress sx={{ color: 'white' }} />
-                </Box>
-              )}
-
-              {/* Optimized image */}
-              <img 
-                src="cab.jpg"
-                alt="Cab Service"
-                loading="eager"
-                fetchpriority="high"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  objectPosition: 'center center',
-                  filter: 'brightness(1)',
-                  backgroundColor: '#000', // Fallback
-                  opacity: imageLoaded ? 1 : 0,
-                  transition: 'opacity 0.3s ease-in-out'
-                }}
-                ref={imageRef}
-              />
+              <CircularProgress sx={{ color: "#FFD700" }} size={60} />
             </Box>
+          )}
+          <img
+            src="cb.jpg"
+            alt="Cab Background"
+            ref={imageRef}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: "scale(1.3) rotate(5deg)",
+            }}
+          />
+        </Box>
 
-            {/* Content */}
-            <Box 
+        {/* Hero Content */}
+        <Container
+          maxWidth="xl"
+          sx={{
+            position: "relative",
+            zIndex: 3,
+            textAlign: "center",
+            py: 12,
+          }}
+        >
+          <Box ref={textRef}>
+            <Typography
+              variant="h1"
               sx={{
-                position: 'relative',
-                zIndex: 2,
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                pt: 8
+                fontSize: { xs: "3.5rem", sm: "5rem", md: "6.5rem" },
+                fontWeight: 900,
+                mb: 3,
+                lineHeight: 1.1,
+                background: "linear-gradient(45deg, #FFF 30%, #FFD700 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                textShadow: "0 0 30px rgba(255,215,0,0.3)",
+                fontFamily: "'Poppins', sans-serif",
               }}
-              ref={textRef}
             >
-              <Typography 
-                variant="h1" 
-                sx={{
-                  color: '#fff',
-                  fontWeight: 800,
-                  fontSize: { xs: '3.5rem', sm: '4rem', md: '5rem' },
-                  textAlign: 'center',
-                  mb: { xs: 4, sm: 5 },
-                  pt: { xs: 15, sm: 20 },
-                  letterSpacing: -0.5,
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                  transform: 'perspective(1000px)',
-                  '&:hover': {
-                    transform: 'perspective(1000px) rotateX(5deg)'
-                  },
-                  transition: 'transform 0.3s ease-out'
-                }}
+              Revolutionizing
+              <Box
+                component="span"
+                sx={{ display: { xs: "block", md: "inline" }, ml: 2 }}
               >
-                Your Ride Awaits
-              </Typography>
-
-              <Typography 
-                variant="h6" 
-                sx={{
-                  color: 'rgba(255,255,255,0.8)',
-                  fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2rem' },
-                  textAlign: 'center',
-                  mb: { xs: 6, sm: 8 }
-                }}
-              >
-                Travel with comfort and style
-              </Typography>
-
-             
-
-              <Box sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: { xs: 3, sm: 5 },
-                mt: 6,
-                '& button': {
-                  transition: 'all 0.3s ease'
-                }
-              }}>
-                <Button
-                  ref={buttonRef}
-                  variant="contained"
-                  onClick={() => navigate('/User-signup')}
-                  sx={{
-                    bgcolor: 'rgba(255, 255, 255, 0.95)',
-                    color: '#000',
-                    px: { xs: 6, sm: 8 },
-                    py: { xs: 1.8, sm: 2 },
-                    fontSize: { xs: '1rem', sm: '1.1rem' },
-                    fontWeight: 600,
-                    borderRadius: '8px',
-                    textTransform: 'none',
-                    boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
-                    backdropFilter: 'blur(10px)',
-                    transform: 'translateY(0)',
-                    transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                    '&:hover': {
-                      bgcolor: '#fff',
-                      transform: 'translateY(-5px)',
-                      boxShadow: '0 10px 20px rgba(0,0,0,0.2)'
-                    }
-                  }}
-                >
-                  Get started as Passenger
-                </Button>
-
-                <Button
-                  variant="outlined"
-                  onClick={() => navigate('/Captain-Signup')}
-                  sx={{
-                    borderColor: 'rgba(255,255,255,0.8)',
-                    borderWidth: '2px',
-                    color: '#fff',
-                    px: { xs: 6, sm: 8 },
-                    py: { xs: 1.7, sm: 1.9 },
-                    fontSize: { xs: '1rem', sm: '1.1rem' },
-                    fontWeight: 600,
-                    borderRadius: '8px',
-                    textTransform: 'none',
-                    backdropFilter: 'blur(10px)',
-                    background: 'rgba(255,255,255,0.1)',
-                    '&:hover': {
-                      borderColor: '#fff',
-                      background: 'rgba(255,255,255,0.2)',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 20px rgba(0,0,0,0.2)'
-                    }
-                  }}
-                >
-                  Get started as Driver
-                </Button>
+                Urban Mobility
               </Box>
-            </Box>
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontSize: { xs: "1.4rem", md: "1.8rem" },
+                color: "rgba(255,255,255,0.9)",
+                mb: 6,
+                maxWidth: 800,
+                mx: "auto",
+                textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+              }}
+            >
+              Experience seamless transportation with AI-powered routing and
+              premium service
+            </Typography>
+          </Box>
+
+          {/* Buttons */}
+          <Box
+            ref={buttonRef}
+            sx={{
+              display: "flex",
+              gap: 4,
+              justifyContent: "center",
+              flexDirection: { xs: "column", sm: "row" },
+              position: "relative",
+              zIndex: 4,
+            }}
+          >
+            <Button
+              variant="contained"
+              onClick={handleGetStarted}
+              sx={{
+                px: 6,
+                py: 2,
+                fontSize: "1.3rem",
+                background: "linear-gradient(45deg, #FFD700 0%, #FFAA00 100%)",
+                borderRadius: 50,
+                boxShadow: "0 8px 24px rgba(255, 215, 0, 0.4)",
+                transition: "all 0.3s",
+                "&:hover": {
+                  transform: "translateY(-3px)",
+                  boxShadow: "0 12px 32px rgba(255, 215, 0, 0.6)",
+                },
+              }}
+            >
+              Passenger Portal
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={handleGetStartedCaptain}
+              sx={{
+                px: 6,
+                py: 2,
+                fontSize: "1.3rem",
+                border: "2px solid #FFD700",
+                color: "#FFD700",
+                borderRadius: 50,
+                position: "relative",
+                overflow: "hidden",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: "-100%",
+                  width: "100%",
+                  height: "100%",
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent)",
+                  transition: "0.4s",
+                },
+                "&:hover::before": {
+                  left: "100%",
+                },
+                "&:hover": {
+                  backgroundColor: "rgba(255,215,0,0.1)",
+                  transform: "translateY(-3px)",
+                },
+              }}
+            >
+              Driver Portal
+            </Button>
           </Box>
         </Container>
       </Box>

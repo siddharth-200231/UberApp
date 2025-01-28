@@ -12,7 +12,7 @@ const CaptainLogout = () => {
     const logout = async () => {
       try {
         // Get token
-        const token = localStorage.getItem('CaptainToken');
+        const token = localStorage.getItem('Captaintoken');
         
         // Call logout API
         await axios.post(
@@ -26,13 +26,13 @@ const CaptainLogout = () => {
         );
 
         // Clear localStorage
-        localStorage.removeItem('CaptainToken');
+        localStorage.removeItem('Captaintoken');
         
         // Reset captain context
         setCaptainData({
           name: '',
           email: '',
-          CaptainToken: '',
+          Captaintoken: '',
           vechile: {
             color: '',
             plate: '',

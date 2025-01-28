@@ -12,7 +12,7 @@ const CaptainProtected = ({ children }) => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('Captaintoken');
       
       if (!token) {
         navigate('/Captain-login');
@@ -30,7 +30,7 @@ const CaptainProtected = ({ children }) => {
         setCaptainData({
           name: captain.fullname,
           email: captain.email,
-          captainToken: token,
+          captaintoken: token,
           vechile: captain.vechile,
           status: captain.status,
           location: captain.location
